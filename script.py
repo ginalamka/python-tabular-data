@@ -75,4 +75,4 @@ def regression_scatter(dataframe, x_column_name, y_column_name,
 
 
 if __name__ == '__main__':
-    main_cli()
+    regression_scatter()
