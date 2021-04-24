@@ -42,13 +42,44 @@ plt.savefig("petal_v_sepal_length_regress.png")
 
 """
 
+def compose_name(x_label, y_label, category_label = None):
+    """
+    Creates a name for a plot file based on X, Y, and categorial variables.
+
+    Parameters
+    ----------
+    x_label : X variable label
+
+    y_label : Y variable label
+
+    category_label: categorial variable
+
+    Returns
+    -------
+    The file name (string)
+
+    """
+    category_str = ""
+    if category_label:
+        category_str = "-by-{0}".format(category_label)
+    plot_path = "{0}-v-{1}{2}.pdf".format(x_label, y_label,
+            category_str)
+    return plot_path
+
+
 def regression_scatter(dataframe, x_column_name, y_column_name,
         category_column_name = None,
         plot_path = None):
+
+    if not plot_path:
+        plot_path = compose_name(x_column_name, y_column_name,
+                category_column_name)
+
     if category_column_name:
         grouped_dataframes = dataframe.groupby(category_column_name)
     else:
         grouped_dataframes = ('all', dataframe),
+
     x_min = min(dataframe[x_column_name])
     x_max = max(dataframe[x_column_name])
 
@@ -73,6 +104,49 @@ def regression_scatter(dataframe, x_column_name, y_column_name,
     plt.savefig(plot_path)
 
 
+def main_cli():
+    parser = argparse.ArgumentParser(
+            formatter_class = argparse.ArgumentDefaultsHelpFormatter)
+
+    parser.add_argument('path',
+            type = str,
+            help = 'A path to a CSV file.')
+    parser.add_argument('x', '--x',
+            type = str,
+            default = "petal_length_cm",
+            help = 'The column name to plot along the X axis.')
+    parser.add_argument('y', '--y',
+            type = str,
+            default = "sepal_length_cm",
+            help = 'The column name to plot along the Y axis.')
+    parser.add_argument('-c', '--category',
+            type = str,
+            default = "species",
+            help = 'The column name to treat as a cetegorical variable.')
+    parser.add_argument('-o', '--output-plot-path',
+            type = str,
+            default = "",
+            help = 'The desired path of the output plot.')
+
+    args = parser.parse_arg()
+
+    if not os.path.exists(args.path):
+        msg = "ERROR: YOU'RE WRONG... The path {0} does not exist.".format(args.path)
+        sys.exit(msg)
+    elif not os.path.isfile(args.path):
+        msg = "ERROR YOU'RE WRONG... The path {0} is not a file.".format(arg.path)
+        sys.exit(msg)
+
+    try:
+        dataframe = pd.read_csv(args.path)
+    except Exception as e:
+        msg = "Pandas couldn't read {0}\n".format(args.path)
+        sys.stderr.write(msg)
+        raise e
+
+    regression_scatter(dataframe, args.x, args.y,
+            args.category, arg.output_plot_path)
+
 
 if __name__ == '__main__':
-    regression_scatter()
+    main_cli()
