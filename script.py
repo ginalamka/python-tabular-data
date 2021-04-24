@@ -111,11 +111,11 @@ def main_cli():
     parser.add_argument('path',
             type = str,
             help = 'A path to a CSV file.')
-    parser.add_argument('x', '--x',
+    parser.add_argument('-x', '--x',
             type = str,
             default = "petal_length_cm",
             help = 'The column name to plot along the X axis.')
-    parser.add_argument('y', '--y',
+    parser.add_argument('-y', '--y',
             type = str,
             default = "sepal_length_cm",
             help = 'The column name to plot along the Y axis.')
@@ -128,7 +128,7 @@ def main_cli():
             default = "",
             help = 'The desired path of the output plot.')
 
-    args = parser.parse_arg()
+    args = parser.parse_args()
 
     if not os.path.exists(args.path):
         msg = "ERROR: YOU'RE WRONG... The path {0} does not exist.".format(args.path)
@@ -145,7 +145,7 @@ def main_cli():
         raise e
 
     regression_scatter(dataframe, args.x, args.y,
-            args.category, arg.output_plot_path)
+            args.category, args.output_plot_path)
 
 
 if __name__ == '__main__':
